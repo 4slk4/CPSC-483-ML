@@ -7,7 +7,28 @@ import matplotlib.pyplot as plt
 from streamlit_lottie import st_lottie
 
 # --- MODEL LOADING ---
-# model = tf.keras.models.load_model('model.h5')
+model = tf.keras.models.load_model('model2.h5')
+
+lesion_type_dict = {
+    0 : 'Actinic keratoses',
+    1 : 'Basal cell carcinoma',
+    2 : 'Benign keratosis-like lesions',
+    3 : 'Dermatofibroma',
+    4 : 'Melanocytic nevi',
+    5 : 'Melanoma',
+    6 : 'Vascular lesions',
+}
+
+lesion_description_dict = {
+    0 : "A rough, scaly patch on the skin caused by years of sun exposure. It's often found on the face, ears, lips, back of the hands, forearms, scalp, or neck.",
+    1 : "A type of skin cancer that begins in the basal cells. It often appears as a slightly transparent bump on the skin, though it can take other forms.",
+    2 : "Commonly known as seborrheic keratoses, these are noncancerous skin growths that vary in color and size. They are usually found on the face, chest, shoulders, or back.",
+    3 : "A common, benign skin nodule thats usually small, firm, and red or brown. Its typically found on the legs.",
+    4 : "Commonly known as moles, these are usually brown or black skin growths that can appear alone or in groups and often develop during childhood or young adulthood.",
+    5 : "The most serious type of skin cancer, which develops in the melanocytes that produce melanin. Melanoma can occur anywhere on the body, in normal skin or in moles that become cancerous.",
+    6 : "Abnormal blood vessels in the skin, which can appear as red spots, patches, or slightly raised lesions. They can be congenital or caused by certain skin conditions."
+}
+
 
 
 # --- PAGE CONFIG  ---
@@ -20,7 +41,6 @@ def load_lottieurl(url: str):
     return r.json()
 
 lottie_doctor = load_lottieurl("https://lottie.host/d0c230d5-814f-41bf-a814-86049c4ce776/ci59c1Cw0y.json")
-lottie_analysis = load_lottieurl("https://lottie.host/29d717ad-813d-444a-87a9-8496d4d8c05c/4Tw6Tw5K7h.json")
 
 # --- HEADER SECTION ---
 with st.container():
@@ -37,21 +57,29 @@ uploaded_file = st.file_uploader("Choose a skin lesion image...", type="jpg")
 # --- ANALYSIS SECTION ---
 if uploaded_file is not None:
     image = PIL.Image.open(uploaded_file)
-    # st.image(image, caption='Uploaded Image.', use_column_width=True)
-    # st.write("")
-    # st.write("Classifying...")
 
-    # img_array = np.asarray(image.resize((224, 224)))  
-    # img_array = img_array / 255.0
-    # img_array = img_array[np.newaxis, ...]
+    col1, col2, col3= st.columns([1, 1, 1])
+    with col2:
+        st.image(image.resize((300, 300)), caption='Uploaded Image.', use_column_width=True)
+    
+    
+    image_resized = image.resize((100, 75))
+    img_np = np.array(image_resized)
+    img_normalized = img_np / 255.0
+    img_normalized = np.expand_dims(img_normalized, axis=0)
+    shaping = img_normalized.shape
 
-    # predictions = model.predict(img_array)
-
+    predictions = model.predict(img_normalized)
+    predictions = np.argmax(predictions, axis = 1)
+    st.write("")
+    
+    # --- RESULT SECTION ---
     # Display the predictions
+    st.markdown("<h3 style='text-align: center; font-weight: bold; text-decoration: underline'>Result:</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='text-align: center; font-weight: bold;'>{lesion_type_dict[predictions[0]]}</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center;'>{lesion_description_dict[predictions[0]]}</h3>", unsafe_allow_html=True)
 
-# --- RESULT SECTION ---
 
-st_lottie(lottie_analysis, speed=1, height=300, key="initial")
 
 
 # --- FOOTER SECTION ---
