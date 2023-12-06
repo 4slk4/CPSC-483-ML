@@ -1,41 +1,35 @@
-# CPSC-483-ML
-## Requirements
-Install Python 3.10
+https://cpsc-483-skin-identification.streamlit.app/
 
-Install pipenv
+# SKIN DISEASE IDENTIFICATION
+## Requirements for local run
+Python 3.9
+Linux/MacOS system
+Install virtualenv
 ```
-$ pip install pipenv
-
-```
-Go to streamlit_ui dir
-```
-$ cd streamit_ui
+$ pip install virtualenv
 
 ```
 
-
-Specify Python version
+Specify Python dir
 ```
-$ pipenv --python 3.10
-
-```
-
-Install all dependencies
-```
-$ pipenv install
+$ virtualenv -p /path/to/python3.9 .env
 
 ```
+Activate virtualenv
+```
+$ source .env/bin/activate
+
+```
+Install dependencies
+
+```
+$ pip install -r requirements.txt
+```
+
+
 Run the app
-
 ```
-$ pipenv run streamlit run app.py
-```
-
-
-Activate the virtual shell env if you want to run notebook
-```
-$ pipenv shell
-$ python --version
+$ streamlit run streamlit_app.py
 
 ```
 
